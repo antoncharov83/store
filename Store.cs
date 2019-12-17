@@ -16,18 +16,9 @@ namespace storeroom
 
         public void saveToJson(string filename) {
             DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(List<Pallete>), new[] { typeof(Pallete), typeof(Box) });
-            //MemoryStream ms = new MemoryStream();
-            //jsonSerializer.WriteObject(ms, palletes);
 
             using (FileStream file = new FileStream(filename, FileMode.Create, System.IO.FileAccess.Write))
             {
-            //    byte[] bytes = new byte[ms.Length];
-            //    ms.Read(bytes, 0, (int)ms.Length);
-            //    file.Write(bytes, 0, bytes.Length);
-            //    ms.Close();
-            //var serializedString = Encoding.UTF8.GetString(ms.ToArray());
-            //ms.Close();
-            //File.WriteAllText(filename, serializedString);
             jsonSerializer.WriteObject(file, palletes);
             }
         }
@@ -45,20 +36,13 @@ namespace storeroom
             }
         }
 
-        public List<Pallete> getGroupedBy() {
-            //var groupedBoxes = from pallete in palletes
-            //                   orderby pallete.getWeight()
-            //                   group pallete by pallete.getExpirationDate()
-            //                  ;
-            var g = palletes
-                .OrderBy(p => p.getWeight())
-                .GroupBy(p => p.getExpirationDate())
-                .SelectMany(p => p)
-                .ToList()
-                .OrderBy(p => p.getExpirationDate())
-                .ToList();
-            return g;
+        public Dictionary<DateTime?, List<Pallete>> getGroupedBy() {
+            var grouped = palletes
+                .GroupBy(pallete => pallete.getExpirationDate())
+                .OrderBy(palletes => palletes.Key)
+                .ToDictionary(palletes => palletes.Key, palletes => palletes.OrderBy(pallete => pallete.getWeight()).ToList());
 
+            return grouped;
         }
         public List<Pallete> get3MaxExpirationDate() {
             var g = palletes
