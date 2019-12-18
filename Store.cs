@@ -35,14 +35,18 @@ namespace storeroom
                 palletes = (List<Pallete>)jsonSerializer.ReadObject(ms);
             }
         }
-
-        public Dictionary<DateTime?, List<Pallete>> getGroupedBy() {
-            var grouped = palletes
-                .GroupBy(pallete => pallete.getExpirationDate())
-                .OrderBy(palletes => palletes.Key)
-                .ToDictionary(palletes => palletes.Key, palletes => palletes.OrderBy(pallete => pallete.getWeight()).ToList());
-
-            return grouped;
+        public IEnumerable<dynamic> /*Dictionary<DateTime?, List<Pallete>>*/ getGroupedBy()
+        {
+            //var grouped = palletes
+            //    .GroupBy(pallete => pallete.getExpirationDate())
+            //    .OrderBy(palletes => palletes.Key)
+            //    .ToDictionary(palletes => palletes.Key, palletes => palletes.OrderBy(pallete => pallete.getWeight()).ToList());
+            var g = palletes
+                .GroupBy(p => p.getExpirationDate())
+                .Select(x => new { x.Key, Items = x.OrderBy(z => z.getExpirationDate()).ToArray() })
+                .OrderBy(p => p.Key).ToArray();
+            
+            return g;
         }
         public List<Pallete> get3MaxExpirationDate() {
             var g = palletes

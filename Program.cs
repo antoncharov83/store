@@ -78,12 +78,13 @@ namespace storeroom
 
             //store.saveToJson("store.json");
             //store.loadFromJson("store.json");
-            Dictionary<DateTime?,List<Pallete>> palletesDict = store.getGroupedBy();
+            /*Dictionary<DateTime?,List<Pallete>>*/
+            IEnumerable<dynamic> palletesDict = store.getGroupedBy();
 
             foreach (var groupedPalletes in palletesDict)
             {
                 System.Console.WriteLine("ExDate:{0}", groupedPalletes.Key);
-                foreach (var p in groupedPalletes.Value)
+                foreach (var p in groupedPalletes.Items)
                 {
                     System.Console.WriteLine("=====weight:{0}, id:{1}", p.getWeight(), p.Id);
                 }
